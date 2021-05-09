@@ -261,6 +261,8 @@ export default {
     },
   },
 };
+
+// TODO where are get params added? why undefined
 </script>
 
 <style scoped></style>

@@ -6,6 +6,7 @@ import {
   apiCreateOrder,
   apiUpdateOrder,
   apiDeleteOrder,
+  apiFetchActiveOrders,
 } from "@/actions/orders";
 import { ref, onUnmounted } from "@vue/composition-api";
 import store from "@/store/index";
@@ -17,8 +18,18 @@ export default function useOrder() {
   const ordersCount = ref(0);
 
   const initialOrder = {
+    code: "",
     notes: "",
+    status: "",
+    price: 0,
     order: [],
+  };
+
+  const orderStatusEnum = {
+    processing: "Processing",
+    inProgress: "In Progress",
+    ready: "Ready",
+    completed: "Completed",
   };
 
   //TODO sort it out
@@ -35,7 +46,18 @@ export default function useOrder() {
 
   const { changeItem } = utils();
 
-  const getOrders = async (skip, take, order, sortBy) => {
+  const getActiveOrders = async (skip, take, order, sortBy) => {
+    const params = new URLSearchParams();
+    params.append("skip", skip);
+    params.append("take", take);
+    params.append("order", order);
+    params.append("sortBy", sortBy);
+    const { result, totalCount } = await apiFetchActiveOrders(params);
+    ordersCount.value = totalCount;
+    orders.value = result;
+  };
+
+  const getAllOrders = async (skip, take, order, sortBy) => {
     const params = new URLSearchParams();
     params.append("skip", skip);
     params.append("take", take);
@@ -105,9 +127,11 @@ export default function useOrder() {
   return {
     order,
     orders,
+    orderStatusEnum,
     initialOrder,
     orderDish,
-    getOrders,
+    getActiveOrders,
+    getAllOrders,
     getOneOrder,
     updateOrder,
     createOrder,

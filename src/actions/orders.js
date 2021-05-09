@@ -3,15 +3,15 @@
 import { HTTP } from "./index";
 
 export function apiFetchAllOrders(params) {
-  return HTTP.get("/order", {
+  return HTTP.get("/order/all", {
     params,
   })
     .then((value) => value.data)
     .catch((err) => err);
 }
 
-export function apiFetchAllOrdersWithCompleted(params) {
-  return HTTP.get("/order/all", {
+export function apiFetchActiveOrders(params) {
+  return HTTP.get("/order", {
     params,
   })
     .then((value) => value.data)
