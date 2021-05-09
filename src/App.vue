@@ -33,9 +33,28 @@
     <!--      </v-btn>-->
     <!--    </v-app-bar>-->
     <!--    <p>TEST</p>-->
-    <v-main>
-      <router-view />
-    </v-main>
+    <!--    <v-main>-->
+    <!--      <router-view />-->
+    <!--    </v-main>-->
+    <transition name="fade" mode="out-in">
+      <router-view> </router-view>
+    </transition>
+    <!--    <v-snackbar v-model="$store.getters.getSnackbar.isOpen" :timeout="3000">-->
+    <!--      {{ $store.getters.getSnackbar.message }}-->
+
+    <!--      <template v-slot:action="{ attrs }">-->
+    <!--        <v-btn-->
+    <!--          @click="-->
+    <!--            $store.dispatch('addSnackbar', { isOpen: false, message: '' })-->
+    <!--          "-->
+    <!--          color="blue"-->
+    <!--          text-->
+    <!--          v-bind="attrs"-->
+    <!--        >-->
+    <!--          Close-->
+    <!--        </v-btn>-->
+    <!--      </template>-->
+    <!--    </v-snackbar>-->
   </v-app>
 </template>
 

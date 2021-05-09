@@ -10,7 +10,9 @@
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title>Test</v-list-item-title>
+              <v-list-item-title>{{
+                $store.getters.getUser
+              }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -50,7 +52,7 @@
     </v-navigation-drawer>
     <v-app-bar app dark elevation="0" color="purple darken-3">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title class="d-flex align-center">KEKEKE</v-toolbar-title>
+      <v-toolbar-title class="d-flex align-center">Coffee Now!</v-toolbar-title>
     </v-app-bar>
     <v-main>
       <v-container fluid>
@@ -61,7 +63,6 @@
 </template>
 
 <script>
-//TODO make list take up all vert height
 import { ref } from "@vue/composition-api";
 
 import Vue from "vue";
@@ -84,21 +85,22 @@ export default {
         route: "/orders-active",
       },
       { title: "All orders", icon: "mdi-cookie", route: "/orders" },
+      { title: "Menus", icon: "mdi-file-document", route: "/menus" },
+      { title: "Dishes", icon: "mdi-bowl-mix", route: "/dishes" },
       { title: "Users", icon: "mdi-account-multiple", route: "/users" },
-      { title: "Resources", icon: "mdi-semantic-web", route: "/resources" },
+      { title: "Roles", icon: "mdi-semantic-web", route: "/roles" },
     ];
-    const logout = () => {
-      console.log("kek");
+    const logout = async () => {
+      alert("Logging out");
+      // TODO fix
+      // await firebase.auth().signOut();
+      // this.$store.dispatch('removeUser');
+      // this.$store.dispatch('addIsLogin', false);
+      // this.$router.push({ name: 'Login' });
     };
     return { drawer, items, logout };
   },
 };
 </script>
 
-<style scoped>
-/*.v-list-item {*/
-/*  flex: 0;*/
-/*}*/
-</style>
-<!--            class="d-flex justify-space-between mb-0"-->
-<!--class="d-flex flex-column" height="100%"-->
+<style scoped></style>
