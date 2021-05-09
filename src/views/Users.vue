@@ -37,6 +37,7 @@
                     :rules="[rules.required]"
                     prepend-icon="mdi-text-short"
                     type="text"
+                    color="purple darken-3"
                   ></v-text-field>
                 </v-col>
                 <v-col v-if="editedIndex === -1" cols="12" class="py-1">
@@ -46,12 +47,14 @@
                     prepend-icon="mdi-at"
                     type="text"
                     :rules="[rules.required, rules.email]"
+                    color="purple darken-3"
                   ></v-text-field>
                 </v-col>
                 <v-col v-if="editedIndex === -1" cols="12" class="py-1">
                   <v-text-field
                     v-model="defaultUser.password"
                     :rules="[rules.required, rules.passwordLength]"
+                    color="purple darken-3"
                     prepend-icon="mdi-lock-outline"
                     :type="showPassword ? 'text' : 'password'"
                     @click:append="showPassword = !showPassword"
@@ -70,6 +73,7 @@
                     :item-value="'id'"
                     label="Roles"
                     :rules="[rules.required]"
+                    color="purple darken-3"
                     required
                     multiple
                     chips
@@ -80,10 +84,10 @@
               </v-card-text>
               <v-card-actions class="elevation-1">
                 <v-spacer></v-spacer>
-                <v-btn color="primary" text @click="dialog = false">
+                <v-btn color="purple darken-3" text @click="dialog = false">
                   Close</v-btn
                 >
-                <v-btn @click="save" color="primary" text> Save</v-btn>
+                <v-btn @click="save" color="purple darken-3" text> Save</v-btn>
               </v-card-actions>
             </v-form>
           </v-card>
@@ -125,14 +129,18 @@
 </template>
 
 <script>
-import user from "@/compositions/user";
+import useUser from "@/compositions/user";
 import useRole from "@/compositions/role";
 import utils from "@/compositions/utils";
 import filters from "@/mixins/filters";
+import GenericDelete from "@/components/GenericDelete";
 
 export default {
   name: "Users",
   mixins: [filters],
+  components: {
+    GenericDelete,
+  },
   setup() {
     const { rules } = utils();
     const { roles, getRoles } = useRole();
@@ -141,7 +149,7 @@ export default {
       rules,
       roles,
       getRoles,
-      ...user(),
+      ...useUser(),
     };
   },
   mounted() {
