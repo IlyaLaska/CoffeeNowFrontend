@@ -241,6 +241,7 @@ export default {
         if (this.editedIndex !== -1) {
           const newObj = {
             name: this.defaultMenu.name,
+            description: this.defaultMenu.description,
             dishIds: this.defaultMenu.dishes.map((x) => x.id),
           };
           const res = await this.updateMenu(this.editedIndex, newObj);
@@ -248,9 +249,8 @@ export default {
         } else {
           const newObj = {
             name: this.defaultMenu.name,
-            email: this.defaultMenu.email,
-            password: this.defaultMenu.password,
-            roleIds: this.defaultMenu.dishes.map((x) => x.id),
+            description: this.defaultMenu.description,
+            dishIds: this.defaultMenu.dishes.map((x) => x.id),
           };
           const res = await this.createMenu(newObj);
           if (res) this.close();

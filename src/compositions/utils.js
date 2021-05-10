@@ -25,23 +25,6 @@ export default function utils() {
     return sortedItems;
   };
 
-  const shallowEqual = (object1, object2) => {
-    const keys1 = Object.keys(object1);
-    const keys2 = Object.keys(object2);
-
-    if (keys1.length !== keys2.length) {
-      return false;
-    }
-
-    for (const key of keys1) {
-      if (object1[key] !== object2[key]) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
   const objectsEqual = (obj1, obj2) => {
     let keys1 = Object.keys(obj1);
     const keys2 = Object.keys(obj2);
@@ -54,13 +37,6 @@ export default function utils() {
       const val1 = obj1[key];
       const val2 = obj2[key];
       const areObjects = isObject(val1) && isObject(val2);
-      if (key === "colorsCount") {
-        if (obj1[key] && obj2[key]) {
-          if (!shallowEqual(obj1[key], obj2[key])) {
-            cleanObj.value[key] = obj2[key];
-          }
-        }
-      }
       if (
         (areObjects && !objectsEqual(val1, val2)) ||
         (!areObjects && val1 !== val2)

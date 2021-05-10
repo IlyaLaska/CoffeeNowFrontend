@@ -13,18 +13,6 @@
     <template v-slot:top>
       <v-toolbar flat>
         <v-dialog persistent v-model="dialog" max-width="80vh">
-          <!--          New item Button-->
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="purple darken-3"
-              dark
-              class="mb-2"
-              v-bind="attrs"
-              v-on="on"
-            >
-              New Item
-            </v-btn>
-          </template>
           <!--          Add item Card-->
           <v-card>
             <v-form ref="form">
@@ -40,36 +28,11 @@
                     color="purple darken-3"
                   ></v-text-field>
                 </v-col>
-                <!--                TODO add order field-->
-                <!--                <v-col v-if="editedIndex === -1" cols="12" class="py-1">-->
-                <!--                  <v-text-field-->
-                <!--                    v-model="defaultOrder.order"-->
-                <!--                    label="Email"-->
-                <!--                    prepend-icon="mdi-at"-->
-                <!--                    type="text"-->
-                <!--                    :rules="[rules.required, rules.email]"-->
-                <!--                    color="purple darken-3"-->
-                <!--                  ></v-text-field>-->
-                <!--                </v-col>-->
-                <!--                <v-col v-if="editedIndex === -1" cols="12" class="py-1">-->
-                <!--                  <v-text-field-->
-                <!--                    v-model="defaultOrder.password"-->
-                <!--                    :rules="[rules.required, rules.passwordLength]"-->
-                <!--                    color="purple darken-3"-->
-                <!--                    prepend-icon="mdi-lock-outline"-->
-                <!--                    :type="showPassword ? 'text' : 'password'"-->
-                <!--                    @click:append="showPassword = !showPassword"-->
-                <!--                    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"-->
-                <!--                    name="Password"-->
-                <!--                    label="Password"-->
-                <!--                    counter-->
-                <!--                  ></v-text-field>-->
-                <!--                </v-col>-->
                 <v-col v-if="editedIndex !== -1" cols="12" class="py-1">
                   <v-select
                     v-model="defaultOrder.status"
                     prepend-icon="mdi-list-status"
-                    :items="orderStatusEnum"
+                    :items="orderStatusArr"
                     :item-text="'name'"
                     :item-value="'id'"
                     label="Status"
@@ -92,7 +55,6 @@
             </v-form>
           </v-card>
         </v-dialog>
-        <v-divider class="mx-4" inset vertical></v-divider>
         <v-toolbar-title>Active Orders</v-toolbar-title>
         <!--        Generic Delete component-->
         <generic-delete
@@ -262,29 +224,15 @@ export default {
       });
     },
     async save() {
-      console.log("Saving: ", this.$refs.form);
       const correct = this.$refs.form.validate();
-      console.log("Correct", correct);
       if (correct) {
-        alert("Saving correct");
-        // TODO finish ALL save methods
-        // if (this.editedIndex !== -1) {
-        //   const newObj = {
-        //     name: this.defaultOrder.name,
-        //     roleIds: this.defaultOrder.roles.map((x) => x.id),
-        //   };
-        //   const res = await this.updateUser(this.editedIndex, newObj);
-        //   if (res) this.close();
-        // } else {
-        //   const newObj = {
-        //     name: this.defaultOrder.name,
-        //     email: this.defaultOrder.email,
-        //     password: this.defaultOrder.password,
-        //     roleIds: this.defaultOrder.roles.map((x) => x.id),
-        //   };
-        //   const res = await this.createUser(newObj);
-        //   if (res) this.close();
-        // }
+        const newObj = {
+          status: this.defaultOrder.status,
+        };
+        const res = await this.updateOrder(this.editedIndex, newObj);
+        if (this.defaultOrder.status === this.orderStatusEnum.completed)
+          this.getActiveOrdersMethod();
+        if (res) this.close();
       } else {
         this.$store.dispatch("addSnackbar", {
           isOpen: true,

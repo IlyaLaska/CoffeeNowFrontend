@@ -25,14 +25,14 @@ export default function useOrder() {
     orderToDish: [],
   };
 
-  // const orderStatusEnum = {
-  //   processing: "Processing",
-  //   inProgress: "In Progress",
-  //   ready: "Ready",
-  //   completed: "Completed",
-  // };
+  const orderStatusEnum = {
+    processing: "Processing",
+    inProgress: "In Progress",
+    ready: "Ready",
+    completed: "Completed",
+  };
 
-  const orderStatusEnum = ["Processing", "In Progress", "Ready", "Completed"];
+  const orderStatusArr = Object.values(orderStatusEnum);
 
   //TODO sort it out
   const orderDish = {
@@ -130,6 +130,7 @@ export default function useOrder() {
     order,
     orders,
     orderStatusEnum,
+    orderStatusArr,
     initialOrder,
     orderDish,
     getActiveOrders,

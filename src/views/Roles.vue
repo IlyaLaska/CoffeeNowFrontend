@@ -199,6 +199,7 @@ export default {
     async save() {
       const correct = this.$refs.form.validate();
       if (correct) {
+        // TODO maybe clean up
         if (this.editedIndex !== -1) {
           const cleanObj = this.objectsEqual(
             this.beforeUpdateRole,

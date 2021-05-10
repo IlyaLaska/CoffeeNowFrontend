@@ -52,10 +52,10 @@
                 </v-col>
                 <v-col cols="12" class="py-1">
                   <v-text-field
-                    v-model="defaultDish.price"
+                    v-model.number="defaultDish.price"
                     label="Price"
                     prepend-icon="mdi-cash"
-                    type="text"
+                    type="number"
                     :rules="[rules.required]"
                     color="purple darken-3"
                   ></v-text-field>
@@ -234,17 +234,13 @@ export default {
         if (this.editedIndex !== -1) {
           const newObj = {
             name: this.defaultDish.name,
-            roleIds: this.defaultDish.roles.map((x) => x.id),
+            description: this.defaultDish.description,
+            price: parseFloat(this.defaultDish.price), // TODO why no work on your own??? - can create, cannot update
+            category: this.defaultDish.category,
           };
           const res = await this.updateDish(this.editedIndex, newObj);
           if (res) this.close();
         } else {
-          // const newObj = {
-          //   name: this.defaultDish.name,
-          //   description: this.defaultDish.description,
-          //   price: this.defaultDish.price,
-          //   category: this.defaultDish.category,
-          // };
           const res = await this.createDish(this.defaultDish);
           if (res) this.close();
         }
