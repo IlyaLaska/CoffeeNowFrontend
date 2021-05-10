@@ -19,7 +19,7 @@ export default function useUser() {
   const initialUser = {
     name: "",
     email: "",
-    password: "", // TODO remove???
+    password: "",
     roleIds: [],
   };
 

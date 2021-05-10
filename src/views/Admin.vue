@@ -1,6 +1,12 @@
 <template>
   <div>
-    <v-navigation-drawer :mini-variant.sync="drawer" app>
+    <v-navigation-drawer
+      v-model="drawer"
+      :permanent="permanent"
+      :temporary="temporary"
+      app
+      :mini-variant="miniVariant"
+    >
       <!--      Header-->
       <template v-slot:prepend>
         <v-list dense nav dark class="py-3" color="purple darken-3">
@@ -51,7 +57,14 @@
       </template>
     </v-navigation-drawer>
     <v-app-bar app dark elevation="0" color="purple darken-3">
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        v-if="temporary"
+        @click="drawer = !drawer"
+      ></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        v-else
+        @click="miniVariant = !miniVariant"
+      ></v-app-bar-nav-icon>
       <v-toolbar-title class="d-flex align-center">Coffee Now!</v-toolbar-title>
     </v-app-bar>
     <v-main>
@@ -64,9 +77,10 @@
 
 <script>
 import { ref } from "@vue/composition-api";
-
+import firebase from "firebase/app";
 import Vue from "vue";
 import VueCompositionAPI from "@vue/composition-api";
+import router from "../router";
 
 Vue.use(VueCompositionAPI);
 
@@ -75,30 +89,48 @@ export default {
   data() {
     return {};
   },
+  mounted() {
+    this.roles = this.$store.getters.getUserRoles;
+    if (this.roles.includes(this.$store.getters.getRolesEnum.employee)) {
+      this.items = this.items.concat([
+        {
+          title: "Active orders",
+          icon: "mdi-cookie-clock",
+          route: "/orders-active",
+        },
+      ]);
+    }
+    if (this.roles.includes(this.$store.getters.getRolesEnum.admin)) {
+      this.items = this.items.concat([
+        { title: "All orders", icon: "mdi-cookie", route: "/orders" },
+        { title: "Menus", icon: "mdi-file-document", route: "/menus" },
+        { title: "Dishes", icon: "mdi-bowl-mix", route: "/dishes" },
+        { title: "Users", icon: "mdi-account-multiple", route: "/users" },
+        { title: "Roles", icon: "mdi-semantic-web", route: "/roles" },
+      ]);
+    }
+  },
   setup() {
     const drawer = ref(false);
-
-    const items = [
-      {
-        title: "Active orders",
-        icon: "mdi-cookie-clock",
-        route: "/orders-active",
-      },
-      { title: "All orders", icon: "mdi-cookie", route: "/orders" },
-      { title: "Menus", icon: "mdi-file-document", route: "/menus" },
-      { title: "Dishes", icon: "mdi-bowl-mix", route: "/dishes" },
-      { title: "Users", icon: "mdi-account-multiple", route: "/users" },
-      { title: "Roles", icon: "mdi-semantic-web", route: "/roles" },
-    ];
-    const logout = async () => {
-      alert("Logging out");
-      // TODO fix
-      // await firebase.auth().signOut();
-      // this.$store.dispatch('removeUser');
-      // this.$store.dispatch('addIsLogin', false);
-      // this.$router.push({ name: 'Login' });
-    };
-    return { drawer, items, logout };
+    const miniVariant = ref(false);
+    const temporary = ref(false);
+    const permanent = ref(true);
+    const role = ref("");
+    const items = ref([]);
+    return { drawer, miniVariant, temporary, permanent, items, role };
+  },
+  watch: {
+    temporary(val) {
+      val ? (this.drawer.value = false) : (this.drawer.value = false);
+    },
+  },
+  methods: {
+    async logout() {
+      await firebase.auth().signOut();
+      this.$store.dispatch("removeUser");
+      this.$store.dispatch("addIsLogin", false);
+      router.push({ name: "Login" });
+    },
   },
 };
 </script>

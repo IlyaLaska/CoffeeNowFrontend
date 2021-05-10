@@ -8,29 +8,28 @@ import Dishes from "@/views/Dishes";
 import Roles from "@/views/Roles";
 import NotFound from "@/views/error/NotFound";
 import Forbidden from "@/views/error/Forbidden";
-// import Home from "../views/Home.vue";
+import Mock from "@/views/Mock";
+import MenuSingle from "@/views/MenuSingle";
+import Login from "@/views/Login";
+import store from "@/store/index";
+import firebase from "firebase/app";
+import { HTTP } from "@/actions/index";
 
 Vue.use(VueRouter);
 
 const routes = [
-  // {
-  //   path: "/",
-  //   name: "Home",
-  //   component: Home,
-  // },
-  // {
-  //   path: "/about",
-  //   name: "About",
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () =>
-  //     import(/* webpackChunkName: "about" */ "../views/About.vue"),
-  // },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+  },
   {
     path: "/admin",
     name: "Admin",
     component: () => import("../views/Admin.vue"),
+    meta: {
+      requiresAuth: true,
+    },
     children: [
       { path: "/orders-active", name: "ActiveOrders", component: ActiveOrders },
       { path: "/orders", name: "AllOrders", component: AllOrders },
@@ -40,6 +39,8 @@ const routes = [
       { path: "/users", name: "Users", component: Users },
     ],
   },
+  { path: "/mock", name: "Mock", component: Mock },
+  { path: "/menu/:id", name: "MenuSingle", component: MenuSingle },
   { path: "*", name: "NotFound", component: NotFound },
   { path: "/forbidden", name: "Forbidden", component: Forbidden },
 ];
@@ -51,6 +52,33 @@ const router = new VueRouter({
   // linkExactActiveClass: "active-page", // TODO need it?
 });
 
-// TODO add auth requirement
+router.beforeEach(async (to, from, next) => {
+  if (to.matched.some((x) => x.meta.requiresAuth)) {
+    const user = await firebase.auth().currentUser;
+    if (user) {
+      store.dispatch("addUser", user.email);
+      if (!store.getters.getIsLogin) {
+        await firebase
+          .auth()
+          .currentUser?.getIdTokenResult()
+          .then((y) => {
+            HTTP.defaults.headers.Authorization = `Bearer ${y.token}`;
+            store.dispatch("addToken", y.token);
+            store.dispatch("addIsLogin", true);
+          })
+          .catch((x) => {
+            store.dispatch("addSnackbar", { isOpen: true, message: x.message });
+          });
+        next();
+      } else {
+        next();
+      }
+    } else {
+      next({ name: "Login" });
+    }
+  } else {
+    next();
+  }
+});
 
 export default router;

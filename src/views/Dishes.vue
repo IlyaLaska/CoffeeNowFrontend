@@ -96,17 +96,9 @@
         <v-icon dark> mdi-image-text </v-icon>
       </v-avatar>
     </template>
-    <!--    <template v-slot:[`item.roles`]="{ item }">-->
-    <!--      <v-chip-->
-    <!--        v-for="role in item.roles"-->
-    <!--        :key="role.id"-->
-    <!--        class="ma-1"-->
-    <!--        color="gray"-->
-    <!--      >-->
-    <!--        <v-icon left small color="grey"> mdi-semantic-web </v-icon>-->
-    <!--        {{ role.name }}-->
-    <!--      </v-chip>-->
-    <!--    </template>-->
+    <template v-slot:[`item.description`]="{ item }">
+      <div style="max-width: 20vw">{{ item.description }}</div>
+    </template>
     <template v-slot:[`item.createDate`]="{ item }">
       {{ item.createDate | shortDate }}
     </template>
@@ -265,7 +257,7 @@ export default {
     },
   },
 };
-// TODO format description, replace icon with photo,
+// TODO replace icon with photo,
 //  add only numbers rule, decide how to save
 </script>
 

@@ -104,6 +104,9 @@
         {{ dish.name }}
       </v-chip>
     </template>
+    <template v-slot:[`item.description`]="{ item }">
+      <div style="max-width: 20vw">{{ item.description }}</div>
+    </template>
     <template v-slot:[`item.createDate`]="{ item }">
       {{ item.createDate | shortDate }}
     </template>
@@ -187,7 +190,7 @@ export default {
   },
   watch: {
     dialog(val) {
-      val ? this.getDishes() : this.close();
+      val ? this.getDishes(0, -1, "desc", "createDate") : this.close();
     },
     options: {
       handler() {

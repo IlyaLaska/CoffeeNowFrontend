@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import firebase from "firebase/app";
 
 Vue.use(Vuex);
 
@@ -8,6 +9,11 @@ export default new Vuex.Store({
     isLogin: false,
     token: "",
     user: "",
+    roles: [],
+    rolesEnum: {
+      admin: "admin",
+      employee: "employee",
+    },
     snackbar: {
       isOpen: false,
       message: "",
@@ -23,6 +29,9 @@ export default new Vuex.Store({
     setUser(state, user) {
       state.user = user;
     },
+    setUserRoles(state, roles) {
+      state.roles = roles;
+    },
     deleteUser(state) {
       state.user = {};
     },
@@ -36,6 +45,8 @@ export default new Vuex.Store({
     getToken: (state) => state.token,
     getUser: (state) => state.user,
     getSnackbar: (state) => state.snackbar,
+    getUserRoles: (state) => state.roles,
+    getRolesEnum: (state) => state.rolesEnum,
   },
   actions: {
     addIsLogin({ commit }, isLogin) {
@@ -50,11 +61,13 @@ export default new Vuex.Store({
     addUser({ commit }, user) {
       commit("setUser", user);
     },
-    // TODO finish
-    // async addRefreshToken({ commit }) {
-    //   const token = await firebase.auth().currentUser.getIdToken(true);
-    //   commit("setToken", token);
-    // },
+    addUserRoles({ commit }, roles) {
+      commit("setUserRoles", roles);
+    },
+    async addRefreshToken({ commit }) {
+      const token = await firebase.auth().currentUser.getIdToken(true);
+      commit("setToken", token);
+    },
     removeUser({ commit }) {
       commit("deleteUser");
     },

@@ -76,7 +76,6 @@
                     :rules="[rules.required]"
                     color="purple darken-3"
                     required
-                    multiple
                     chips
                     persistent-hint
                     return-object
@@ -109,17 +108,18 @@
       </v-avatar>
     </template>
     <!--    TODO Add dishes and dish amounts here-->
-    <!--    <template v-slot:[`item.roles`]="{ item }">-->
-    <!--      <v-chip-->
-    <!--        v-for="role in item.roles"-->
-    <!--        :key="role.id"-->
-    <!--        class="ma-1"-->
-    <!--        color="gray"-->
-    <!--      >-->
-    <!--        <v-icon left small color="grey"> mdi-semantic-web </v-icon>-->
-    <!--        {{ role.name }}-->
-    <!--      </v-chip>-->
-    <!--    </template>-->
+    <template v-slot:[`item.orderToDish`]="{ item }">
+      <v-chip
+        v-for="dishOrder in item.orderToDish"
+        :key="dishOrder.id"
+        class="ma-1"
+        color="gray"
+        @click="toDishes"
+      >
+        <v-icon left small color="grey"> mdi-bowl-mix </v-icon>
+        {{ dishOrder.dish.name }}: {{ dishOrder.amount }}
+      </v-chip>
+    </template>
     <template v-slot:[`item.createDate`]="{ item }">
       {{ item.createDate | shortDate }}
     </template>
@@ -135,6 +135,7 @@ import utils from "@/compositions/utils";
 import filters from "@/mixins/filters";
 import GenericDelete from "@/components/GenericDelete";
 import useOrder from "@/compositions/order";
+import router from "@/router";
 
 export default {
   name: "AllOrders",
@@ -171,6 +172,11 @@ export default {
         {
           text: "Notes",
           value: "notes",
+          sortable: false,
+        },
+        {
+          text: "Order",
+          value: "orderToDish",
           sortable: false,
         },
         {
@@ -215,6 +221,9 @@ export default {
     },
   },
   methods: {
+    toDishes() {
+      router.push({ name: "Dishes" });
+    },
     getAllOrdersMethod() {
       this.loading = true;
       const { sortBy, sortDesc, page, itemsPerPage } = this.options;
@@ -286,7 +295,6 @@ export default {
     },
   },
 };
-// TODO make status not Object object
 </script>
 
 <style scoped></style>

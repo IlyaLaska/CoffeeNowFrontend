@@ -22,15 +22,17 @@ export default function useOrder() {
     notes: "",
     status: "",
     price: 0,
-    order: [],
+    orderToDish: [],
   };
 
-  const orderStatusEnum = {
-    processing: "Processing",
-    inProgress: "In Progress",
-    ready: "Ready",
-    completed: "Completed",
-  };
+  // const orderStatusEnum = {
+  //   processing: "Processing",
+  //   inProgress: "In Progress",
+  //   ready: "Ready",
+  //   completed: "Completed",
+  // };
+
+  const orderStatusEnum = ["Processing", "In Progress", "Ready", "Completed"];
 
   //TODO sort it out
   const orderDish = {
