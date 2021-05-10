@@ -82,6 +82,9 @@
         {{ dishOrder.dish.name }}: {{ dishOrder.amount }}
       </v-chip>
     </template>
+    <template v-slot:[`item.notes`]="{ item }">
+      <div style="max-width: 20vw">{{ item.notes }}</div>
+    </template>
     <template v-slot:[`item.createDate`]="{ item }">
       {{ item.createDate | shortDate }}
     </template>
