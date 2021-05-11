@@ -39,7 +39,10 @@ export default function useDish() {
     params.append("sortBy", sortBy);
     const { result, totalCount } = await apiFetchAllDishes(params);
     dishesCount.value = totalCount;
-    dishes.value = result;
+    dishes.value = result.map((dish) => {
+      dish.amount = 0;
+      return dish;
+    });
   };
 
   const getOneDish = async (id) => {

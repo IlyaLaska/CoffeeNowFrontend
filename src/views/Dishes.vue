@@ -97,7 +97,7 @@
       </v-avatar>
     </template>
     <template v-slot:[`item.description`]="{ item }">
-      <div style="max-width: 20vw">{{ item.description }}</div>
+      <div style="max-width: 45vw">{{ item.description }}</div>
     </template>
     <template v-slot:[`item.createDate`]="{ item }">
       {{ item.createDate | shortDate }}

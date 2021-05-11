@@ -26,21 +26,22 @@
           <template v-slot:top>
             <v-toolbar flat>
               <v-dialog persistent v-model="dialog" max-width="80vh">
-                <!--          New item Button-->
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    color="purple darken-3"
-                    dark
-                    class="mb-2"
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    New Item
-                  </v-btn>
-                </template>
+                <!--                &lt;!&ndash;          New item Button&ndash;&gt;-->
+                <!--                <template v-slot:activator="{ on }">-->
+                <!--                  <v-btn-->
+                <!--                    color="purple darken-3"-->
+                <!--                    dark-->
+                <!--                    class="mb-2"-->
+                <!--                    v-on="on"-->
+                <!--                    @click="toCheckout"-->
+                <!--                  >-->
+                <!--                    Order-->
+                <!--                  </v-btn>-->
+                <!--                </template>-->
               </v-dialog>
               <v-divider class="mx-4" inset vertical></v-divider>
-              <v-toolbar-title>Blah-blah</v-toolbar-title>
+              <!--              TODO How to get menu name-->
+              <v-toolbar-title>Menu Name Here</v-toolbar-title>
             </v-toolbar>
           </template>
           <template v-slot:[`item.id`]="{}">
@@ -59,6 +60,9 @@
               {{ role.name }}
             </v-chip>
           </template>
+          <template v-slot:[`item.description`]="{ item }">
+            <div style="max-width: 60vw">{{ item.description }}</div>
+          </template>
           <template v-slot:[`item.createDate`]="{ item }">
             {{ item.createDate | shortDate }}
           </template>
@@ -71,11 +75,15 @@
           </template>
         </v-data-table>
         <v-card-actions>
-          <p class="mb-0 font-weight-thin text--lighten-3">
-            After making your order press the 'Order' button to proceed to
-            checkout
-          </p>
-          <v-spacer></v-spacer>
+          <!--          <p class="mb-0 font-weight-thin text&#45;&#45;lighten-3">-->
+          <!--            After making your order press the 'Order' button to proceed to-->
+          <!--            checkout-->
+          <!--          </p>-->
+          <v-text-field
+            v-model="notes"
+            label="Enter any additional notes here..."
+            class="ml-2 mx-4"
+          ></v-text-field>
           <v-btn class="ma-0" dark color="purple darken-3" @click="toCheckout()"
             >Order</v-btn
           >
@@ -92,14 +100,18 @@ import VueCompositionAPI from "@vue/composition-api";
 import Vue from "vue";
 Vue.use(VueCompositionAPI);
 import { ref } from "@vue/composition-api";
+import useOrder from "../compositions/order";
 
 export default {
   name: "MenuSingle",
   setup() {
     const order = ref([]);
+    const notes = ref("");
     return {
       ...useDish(),
+      ...useOrder(),
       order,
+      notes,
     };
   },
   mounted() {
@@ -142,7 +154,7 @@ export default {
         },
         {
           text: "Amount",
-          value: "order",
+          value: "amount",
           sortable: false,
           align: "center",
         },
@@ -171,8 +183,32 @@ export default {
     backToMock() {
       router.push("/mock");
     },
-    toCheckout() {
-      alert("LOL");
+    async toCheckout() {
+      // alert("LOL");
+      console.log("notes: ", this.notes);
+      console.log("Checkout: ", this.dishes);
+      const newObj = {
+        notes: this.notes,
+        order: this.dishes
+          .filter((dish) => dish.amount)
+          .map((dish) => {
+            return {
+              dishId: dish.id,
+              amount: dish.amount,
+            };
+          }),
+      };
+      console.log("NewObj: ", newObj);
+      await this.createOrder(newObj);
+      // this.dishes.reduce((prev, dish, ind, acc) => {
+      //   if (dish.amount) {
+      //     acc.push({
+      //       dishId: dish.id,
+      //       amount: dish.amount,
+      //     });
+      //     return acc;
+      //   } else return acc;
+      // }, []),
     },
     getDishesMethod() {
       this.loading = true;
@@ -186,21 +222,23 @@ export default {
       );
     },
     addItem(item) {
-      console.log(item);
+      // console.log("adding: ", item);
       // if (!this.order) this.order.value = [];
-      console.log(this.order);
-      const id = this.order.find((orderEl) => orderEl.dishId === item.id);
-      if (id) {
-        this.order[id].amount++;
-      } else {
-        this.order.push({
-          dishId: item.id,
-          amount: 1,
-        });
-      }
+      // console.log("order: ", this.order);
+      item.amount++;
+      // const id = this.order.find((orderEl) => orderEl.dishId === item.id);
+      // if (id) {
+      //   this.order[id].amount++;
+      // } else {
+      //   this.order.push({
+      //     dishId: item.id,
+      //     amount: 1,
+      //   });
+      // }
     },
     removeItem(item) {
-      console.log(item);
+      // console.log("removing: ", item);
+      if (item.amount > 0) item.amount--;
     },
   },
 };
