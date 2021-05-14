@@ -1,13 +1,13 @@
 "use strict";
 
 import {
+  apiCreateMenu,
+  apiDeleteMenu,
   apiFetchAllMenus,
   apiFetchOneMenu,
-  apiCreateMenu,
   apiUpdateMenu,
-  apiDeleteMenu,
 } from "@/actions/menus";
-import { ref, onUnmounted } from "@vue/composition-api";
+import { onUnmounted, ref } from "@vue/composition-api";
 import store from "@/store/index";
 import utils from "@/compositions/utils";
 
@@ -15,6 +15,8 @@ export default function useMenu() {
   const menu = ref({});
   const menus = ref([]);
   const menusCount = ref(0);
+
+  const dishes = ref([]);
 
   const initialMenu = {
     name: "",
@@ -42,8 +44,18 @@ export default function useMenu() {
   };
 
   const getOneMenu = async (id) => {
-    const { value } = await apiFetchOneMenu(id);
-    menu.value = value;
+    const res = await apiFetchOneMenu(id);
+    if (res.dishes) {
+      res.dishes = res.dishes.map((dish) => {
+        dish.amount = 0;
+        return dish;
+      });
+      dishes.value = res.dishes.map((dish) => {
+        dish.amount = 0;
+        return dish;
+      });
+    }
+    menu.value = res;
   };
 
   const updateMenu = (id, item) =>
@@ -100,6 +112,7 @@ export default function useMenu() {
   return {
     menu,
     menus,
+    dishes,
     initialMenu,
     getMenus,
     getOneMenu,

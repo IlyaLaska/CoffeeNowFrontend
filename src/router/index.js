@@ -14,6 +14,7 @@ import Login from "@/views/Login";
 import store from "@/store/index";
 import firebase from "firebase/app";
 import { HTTP } from "@/actions/index";
+import OrderStatus from "../views/OrderStatus";
 
 Vue.use(VueRouter);
 
@@ -43,6 +44,7 @@ const routes = [
   { path: "/menu/:id", name: "MenuSingle", component: MenuSingle },
   { path: "*", name: "NotFound", component: NotFound },
   { path: "/forbidden", name: "Forbidden", component: Forbidden },
+  { path: "/status", name: "OrderStatus", component: OrderStatus },
 ];
 
 const router = new VueRouter({
@@ -64,6 +66,7 @@ router.beforeEach(async (to, from, next) => {
           .then((y) => {
             HTTP.defaults.headers.Authorization = `Bearer ${y.token}`;
             store.dispatch("addToken", y.token);
+            store.dispatch("addUserRoles", y.claims.keys);
             store.dispatch("addIsLogin", true);
           })
           .catch((x) => {

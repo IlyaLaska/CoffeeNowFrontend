@@ -89,8 +89,8 @@ export default {
   data() {
     return {};
   },
-  mounted() {
-    this.roles = this.$store.getters.getUserRoles;
+  async mounted() {
+    this.roles = await this.$store.getters.getUserRoles;
     if (this.roles.includes(this.$store.getters.getRolesEnum.employee)) {
       this.items = this.items.concat([
         {
