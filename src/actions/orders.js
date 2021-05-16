@@ -2,6 +2,17 @@
 
 import { HTTP } from "./index";
 
+export async function apiFetchMyOrders(params, orders) {
+  const res = await Promise.all(
+    orders.map((order) => {
+      return HTTP.get(`/order/code/${order.code}`, { params })
+        .then((value) => value.data)
+        .catch((err) => err);
+    })
+  );
+  return res;
+}
+
 export function apiFetchAllOrders(params) {
   return HTTP.get("/order/all", {
     params,

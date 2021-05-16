@@ -40,6 +40,7 @@ export default function useDish() {
     const { result, totalCount } = await apiFetchAllDishes(params);
     dishesCount.value = totalCount;
     dishes.value = result;
+    console.log("In getter:", dishes.value);
   };
 
   const getOneDish = async (id) => {

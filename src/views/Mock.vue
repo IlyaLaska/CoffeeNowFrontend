@@ -20,7 +20,7 @@
             dark
             color="purple darken-3"
             class="d-flex"
-            @click="goToMenu(0)"
+            @click="goToMenu(1)"
             >Order</v-btn
           >
         </v-card-actions>
@@ -35,7 +35,7 @@
             dark
             color="purple darken-3"
             class="d-flex"
-            @click="goToMenu(1)"
+            @click="goToMenu(2)"
             >Order</v-btn
           >
         </v-card-actions>

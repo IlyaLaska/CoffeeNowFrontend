@@ -10,8 +10,12 @@
         >COFFEE NOW!</v-toolbar-title
       >
       <v-spacer></v-spacer>
-      <v-btn class="ma-0" dark color="purple darken-2" @click="dialog = !dialog"
-        >Order</v-btn
+      <v-btn
+        class="ma-0"
+        dark
+        color="purple darken-2"
+        @click="dialogMyOrders = !dialogMyOrders"
+        >My orders</v-btn
       >
     </v-app-bar>
     <v-main>
@@ -44,7 +48,14 @@
               <!--                  </v-btn>-->
               <!--                </template>-->
               <!--              </v-dialog>-->
-              <v-divider class="ml-4" inset vertical></v-divider>
+              <v-btn
+                class="ma-0"
+                dark
+                color="purple darken-3"
+                @click="dialog = !dialog"
+                >Order</v-btn
+              >
+              <!--              <v-divider class="ml-4" inset vertical></v-divider>-->
               <v-divider class="mx-3" inset vertical></v-divider>
               <v-toolbar-title class="font-weight-medium">{{
                 menu.name
@@ -86,21 +97,14 @@
           <!--          >-->
           <!--          </v-data-footer>-->
         </v-data-table>
-        <v-card-actions>
-          <v-text-field
-            v-model="notes"
-            label="Enter any additional notes here..."
-            class="ml-2 mx-4"
-            color="purple darken-3"
-          ></v-text-field>
-          <v-btn
-            class="ma-0"
-            dark
-            color="purple darken-3"
-            @click="dialog = !dialog"
-            >Order</v-btn
-          >
-        </v-card-actions>
+        <!--        <v-card-actions>-->
+        <!--          <v-text-field-->
+        <!--            v-model="notes"-->
+        <!--            label="Enter any additional notes here..."-->
+        <!--            class="ml-2 mx-4"-->
+        <!--            color="purple darken-3"-->
+        <!--          ></v-text-field>-->
+        <!--        </v-card-actions>-->
       </v-card>
       <v-dialog v-model="dialog" width="40vw" persistent>
         <v-card width="40vw" class="wrap">
@@ -147,6 +151,24 @@
                 <div class="font-weight-medium">{{ pricePreview }}</div>
               </div>
             </v-list-item>
+            <v-list-item class="elevation-2" v-if="cartEmpty">
+              <v-list-item-title
+                class="font-weight-medium d-flex flex-row align-center"
+                style="flex: initial"
+              >
+                Your cart seems to be empty...
+              </v-list-item-title>
+            </v-list-item>
+            <v-divider class="my-3" v-if="!cartEmpty"></v-divider>
+            <v-list-item class="elevation-2" v-if="!cartEmpty">
+              <v-text-field
+                v-model="notes"
+                label="Enter any additional notes here..."
+                prepend-icon="mdi-text"
+                type="text"
+                color="purple darken-3"
+              ></v-text-field>
+            </v-list-item>
             <v-list-item class="elevation-2" v-if="!cartEmpty">
               <v-text-field
                 v-model="email"
@@ -163,7 +185,6 @@
               >Back</v-btn
             >
             <v-spacer></v-spacer>
-            <!--            TODO block button when no email-->
             <v-btn
               dark
               color="purple darken-3"
@@ -188,6 +209,65 @@
           />
         </v-form>
       </v-dialog>
+      <!--      persistent-->
+      <v-dialog v-model="dialogMyOrders" width="40vw" fullscreen>
+        <v-card>
+          <v-toolbar dark elevation="3" color="purple darken-3">
+            <!--        <v-icon large class="pl-6">mdi-coffee</v-icon>-->
+            <v-btn
+              dark
+              elevation="1"
+              color="purple darken-2"
+              @click="dialogMyOrders = !dialogMyOrders"
+              ><v-icon>mdi-arrow-left-bold</v-icon>Close</v-btn
+            >
+            <v-icon class="pl-6">mdi-coffee</v-icon>
+            <v-toolbar-title
+              class="d-flex align-center font-weight-medium text-h5"
+              >My Orders</v-toolbar-title
+            >
+            <v-spacer></v-spacer>
+            <v-btn class="ma-0" dark color="purple darken-2" @click="reload"
+              >New Order</v-btn
+            >
+          </v-toolbar>
+          <v-list>
+            <v-list-item
+              class="elevation-2 ma-2"
+              v-for="order in ordersMine"
+              :key="order.id"
+              style="border-radius: 4px"
+            >
+              <v-list-item-content>
+                <p>
+                  <span class="font-weight-medium">Order:</span>
+                  {{ order.code }}
+                </p>
+                <p class="mb-0">
+                  <span class="font-weight-medium">Status:</span>
+                  {{ order.status }}
+                </p>
+              </v-list-item-content>
+
+              <!--              <v-list-item-action>-->
+              <!--                <v-btn dark color="purple darken-3">Track</v-btn>-->
+              <!--              </v-list-item-action>-->
+            </v-list-item>
+          </v-list>
+          <p
+            class="font-weight-medium text-h6 pa-2 mx-2 elevation-2"
+            v-if="noOrders"
+          >
+            You don't seem to have any uncompleted orders...
+          </p>
+          <!--          <v-card class="ma-3">-->
+          <!--            <v-card-title> Order {order.id} </v-card-title>-->
+          <!--            <v-card-actions>-->
+          <!--              <v-btn dark color="purple darken-3">Track</v-btn>-->
+          <!--            </v-card-actions>-->
+          <!--          </v-card>-->
+        </v-card>
+      </v-dialog>
     </v-main>
   </div>
 </template>
@@ -203,7 +283,7 @@ import useOrder from "../compositions/order";
 import useMenu from "../compositions/menu";
 import LiqPay from "liq-sdk";
 import utils from "../compositions/utils";
-// import { apiPay } from "../actions/payment";
+import { HTTP } from "../actions/index";
 
 export default {
   name: "MenuSingle",
@@ -212,11 +292,11 @@ export default {
     const notes = ref("");
     const { menu, getOneMenu } = useMenu();
     const menuName = ref("");
-    const dishes = ref([]);
+    const menuDishes = ref([]);
     const email = ref("");
 
-    const public_key = "sandbox_i3090105878";
-    const private_key = "sandbox_2HXJVgoQdhuXfRAwwrIj57zwkbcBrcGNOvIVqt53";
+    const public_key = process.env.PUBLIC_KEY;
+    const private_key = process.env.PRIVATE_KEY;
     const liqpay = ref({});
     liqpay.value = new LiqPay(public_key, private_key);
 
@@ -227,7 +307,7 @@ export default {
 
     return {
       // ...useDish(),
-      dishes,
+      dishes: menuDishes,
       ...useOrder(),
       order,
       notes,
@@ -252,11 +332,15 @@ export default {
     this.dishes = this.menu.dishes;
     console.log("AAAAA: ", this.dishes);
     this.loading = false;
+    // setInterval(() => {
+    //   console.log(this.orders, this.orders.length);
+    //   if (this.orders.length) this.getMyOrders();
+    // }, 3000);
   },
   data() {
     return {
       dialog: false,
-      dialogDelete: false,
+      dialogMyOrders: false,
       headers: [
         {
           text: "",
@@ -325,12 +409,16 @@ export default {
       console.log(correct);
       return correct === true;
     },
+    ordersMine() {
+      return this.orders.filter((order) => order.status !== "Completed");
+    },
     orderPreview() {
       console.log("Dishes: ", this.dishes);
       if (!this.dishes.filter((dish) => dish.amount).length) {
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         this.cartEmpty = true;
-        return ["Your cart seems to be empty...."];
+        return [];
+        // return ["Your cart seems to be empty...."];
       }
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.total = 0;
@@ -354,6 +442,9 @@ export default {
   methods: {
     backToMock() {
       router.push("/mock");
+    },
+    reload() {
+      router.go();
     },
     // async orderPreview() {
     //   const orderPreview = this.dishes
@@ -384,29 +475,47 @@ export default {
             };
           }),
       };
-      console.log("NewObj: ", newObj);
+      const order = await this.createOrder(newObj);
+      console.log("order: ", order);
       const html = await this.liqpay.cnb_form({
         action: "pay",
         amount: this.total,
         currency: "USD",
-        description: "description text",
-        order_id: "order_id_1",
+        description: order.code,
+        order_id: order.code,
+        server_url: process.env.SERVER_URL,
         version: "3",
       });
-      console.log("HTMLMLMLM", html);
       const htmlArr = html.split('value="');
       this.data = htmlArr[1].split('"')[0];
       this.signature = htmlArr[2].split('"')[0];
-      // TODO stopped by CORS - what's the diff
-      // const res = await apiPay(this.data, this.signature);
-      // console.log("RESSS: ", res);
-      console.log("DATATAT: ", this.data);
-      console.log("DATATAT: ", this.signature);
       // TODO why normal v-bind not work?
-      document.getElementById("payForm")["data"].value = this.data;
-      document.getElementById("payForm")["signature"].value = this.signature;
-      document.getElementById("payForm").submit();
-      await this.createOrder(newObj);
+      const form = document.querySelector("#payForm");
+      form["data"].value = this.data;
+      form["signature"].value = this.signature;
+      form.submit();
+      setTimeout(() => {
+        HTTP.post("https://www.liqpay.ua/api/request", {
+          action: "status",
+          version: "3",
+          order_id: order.code,
+        })
+          .then((x) => console.log(x))
+          .catch((err) => err);
+        // this.liqpay.api(
+        //   "request",
+        //   {
+        //     action: "status",
+        //     version: "3",
+        //     order_id: order.code,
+        //   },
+        //   function (json) {
+        //     console.log("DING DING: ", json);
+        //   }
+        // );
+      }, 20000);
+      this.dialog = false;
+      this.dialogMyOrders = true;
       // this.dishes.reduce((prev, dish, ind, acc) => {
       //   if (dish.amount) {
       //     acc.push({

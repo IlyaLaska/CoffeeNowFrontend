@@ -1,6 +1,7 @@
 "use strict";
 
 import {
+  apiFetchMyOrders,
   apiFetchAllOrders,
   apiFetchOneOrder,
   apiCreateOrder,
@@ -16,6 +17,7 @@ export default function useOrder() {
   const order = ref({});
   const orders = ref([]);
   const ordersCount = ref(0);
+  const noOrders = ref(true);
 
   const initialOrder = {
     code: "",
@@ -48,6 +50,13 @@ export default function useOrder() {
 
   const { changeItem } = utils();
 
+  const getMyOrders = async () => {
+    const params = new URLSearchParams();
+    const res = await apiFetchMyOrders(params, orders.value);
+    console.log("MY ORDERS:: ", res);
+    orders.value = res;
+  };
+
   const getActiveOrders = async (skip, take, order, sortBy) => {
     const params = new URLSearchParams();
     params.append("skip", skip);
@@ -68,6 +77,9 @@ export default function useOrder() {
     const { result, totalCount } = await apiFetchAllOrders(params);
     ordersCount.value = totalCount;
     orders.value = result;
+    if (!totalCount) {
+      noOrders.value = true;
+    }
   };
 
   const getOneOrder = async (id) => {
@@ -100,7 +112,8 @@ export default function useOrder() {
           isOpen: true,
           message: "Order created successfully",
         });
-        return true;
+        noOrders.value = false;
+        return x.data;
       }
       store.dispatch("addSnackbar", {
         isOpen: true,
@@ -133,11 +146,13 @@ export default function useOrder() {
     orderStatusArr,
     initialOrder,
     orderDish,
+    getMyOrders,
     getActiveOrders,
     getAllOrders,
     getOneOrder,
     updateOrder,
     createOrder,
     deleteOrder,
+    noOrders,
   };
 }

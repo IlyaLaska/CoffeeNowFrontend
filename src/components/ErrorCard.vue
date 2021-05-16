@@ -14,8 +14,8 @@
           {{ errorProp.name }}
         </div>
         <div>{{ errorProp.text }}</div>
-        <v-btn class="my-2" to="/login" outlined color="purple darken-3">
-          Go to login
+        <v-btn class="my-2" to="/mock" outlined color="purple darken-3">
+          Go back
         </v-btn>
       </div>
     </v-card-text>
