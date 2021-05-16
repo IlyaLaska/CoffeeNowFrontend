@@ -332,10 +332,10 @@ export default {
     this.dishes = this.menu.dishes;
     console.log("AAAAA: ", this.dishes);
     this.loading = false;
-    // setInterval(() => {
-    //   console.log(this.orders, this.orders.length);
-    //   if (this.orders.length) this.getMyOrders();
-    // }, 3000);
+    setInterval(() => {
+      console.log(this.orders, this.orders.length);
+      if (this.orders.length) this.getMyOrders();
+    }, 3000);
   },
   data() {
     return {

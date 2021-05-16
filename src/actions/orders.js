@@ -7,10 +7,12 @@ export async function apiFetchMyOrders(params, orders) {
     orders.map((order) => {
       return HTTP.get(`/order/code/${order.code}`, { params })
         .then((value) => value.data)
-        .catch((err) => err);
+        .catch((err) => {
+          console.log(err);
+        });
     })
   );
-  return res;
+  return res.filter((order) => order);
 }
 
 export function apiFetchAllOrders(params) {

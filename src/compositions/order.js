@@ -53,7 +53,9 @@ export default function useOrder() {
   const getMyOrders = async () => {
     const params = new URLSearchParams();
     const res = await apiFetchMyOrders(params, orders.value);
+    console.log("WTF:: ", orders.value);
     console.log("MY ORDERS:: ", res);
+    if (!res.length) noOrders.value = true;
     orders.value = res;
   };
 
