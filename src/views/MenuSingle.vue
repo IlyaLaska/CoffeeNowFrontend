@@ -295,9 +295,10 @@ export default {
     const menuDishes = ref([]);
     const email = ref("");
 
-    const public_key = process.env.PUBLIC_KEY;
-    const private_key = process.env.PRIVATE_KEY;
+    const public_key = process.env.VUE_APP_PUBLIC_KEY;
+    const private_key = process.env.VUE_APP_PRIVATE_KEY;
     const liqpay = ref({});
+    alert(public_key);
     liqpay.value = new LiqPay(public_key, private_key);
 
     const data = ref("");
@@ -335,7 +336,7 @@ export default {
     setInterval(() => {
       console.log(this.orders, this.orders.length);
       if (this.orders.length) this.getMyOrders();
-    }, 3000);
+    }, 5000);
   },
   data() {
     return {
@@ -483,7 +484,7 @@ export default {
         currency: "USD",
         description: order.code,
         order_id: order.code,
-        server_url: process.env.SERVER_URL,
+        server_url: process.env.VUE_APP_SERVER_URL,
         version: "3",
       });
       const htmlArr = html.split('value="');
