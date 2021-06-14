@@ -105,9 +105,14 @@ export default {
           .auth()
           .signInWithEmailAndPassword(this.admin.email, this.admin.password);
         this.$store.dispatch("addUser", user.email);
-        const { token } = await firebase.auth().currentUser?.getIdTokenResult();
+        const {
+          token,
+          claims,
+        } = await firebase.auth().currentUser?.getIdTokenResult();
+        console.log("CLAIMS: ", claims);
         this.$store.dispatch("addIsLogin", true);
         this.$store.dispatch("addToken", token);
+        this.$store.dispatch("addUserRoles", claims.keys);
         HTTP.defaults.headers.Authorization = `Bearer ${token}`;
         this.$router.push({ name: "Admin" });
       } catch (e) {

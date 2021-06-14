@@ -2,9 +2,10 @@
   <div>
     <v-app-bar app dark elevation="3" color="purple darken-3">
       <!--        <v-icon large class="pl-6">mdi-coffee</v-icon>-->
-      <v-btn dark elevation="1" color="purple darken-2" @click="backToMock()"
+      <v-btn dark elevation="0" color="purple darken-3" @click="backToMock()"
         ><v-icon>mdi-arrow-left-bold</v-icon> Back</v-btn
       >
+      <v-divider inset vertical class="mx-2"></v-divider>
       <v-icon class="pl-6">mdi-coffee</v-icon>
       <v-toolbar-title class="d-flex align-center font-weight-medium text-h5"
         >COFFEE NOW!</v-toolbar-title
@@ -13,9 +14,17 @@
       <v-btn
         class="ma-0"
         dark
-        color="purple darken-2"
+        color="purple darken-3 elevation-0"
         @click="dialogMyOrders = !dialogMyOrders"
         >My orders</v-btn
+      >
+      <v-divider vertical inset class="mx-2"></v-divider>
+      <v-btn
+        class="ma-0"
+        dark
+        color="purple darken-3 elevation-0"
+        @click="dialogTrackOrder = !dialogTrackOrder"
+        >Track Order</v-btn
       >
     </v-app-bar>
     <v-main>
@@ -216,20 +225,21 @@
             <!--        <v-icon large class="pl-6">mdi-coffee</v-icon>-->
             <v-btn
               dark
-              elevation="1"
-              color="purple darken-2"
+              elevation="0"
+              color="purple darken-3"
               @click="dialogMyOrders = !dialogMyOrders"
               ><v-icon>mdi-arrow-left-bold</v-icon>Close</v-btn
             >
+            <v-divider inset vertical class="mx-2"></v-divider>
             <v-icon class="pl-6">mdi-coffee</v-icon>
             <v-toolbar-title
               class="d-flex align-center font-weight-medium text-h5"
               >My Orders</v-toolbar-title
             >
             <v-spacer></v-spacer>
-            <v-btn class="ma-0" dark color="purple darken-2" @click="reload"
-              >New Order</v-btn
-            >
+            <!--            <v-btn class="ma-0" dark color="purple darken-2" @click="reload"-->
+            <!--              >New Order</v-btn-->
+            <!--            >-->
           </v-toolbar>
           <v-list>
             <v-list-item
@@ -268,6 +278,58 @@
           <!--          </v-card>-->
         </v-card>
       </v-dialog>
+      <v-dialog v-model="dialogTrackOrder" width="40vw" fullscreen>
+        <v-card>
+          <v-toolbar dark elevation="3" color="purple darken-3">
+            <!--        <v-icon large class="pl-6">mdi-coffee</v-icon>-->
+            <v-btn
+              dark
+              elevation="0"
+              color="purple darken-3"
+              @click="dialogTrackOrder = !dialogTrackOrder"
+              ><v-icon>mdi-arrow-left-bold</v-icon>Close</v-btn
+            >
+            <v-divider inset vertical class="mx-2"></v-divider>
+            <v-icon class="pl-6">mdi-coffee</v-icon>
+            <v-toolbar-title
+              class="d-flex align-center font-weight-medium text-h5"
+              >Order Tracking</v-toolbar-title
+            >
+            <v-spacer></v-spacer>
+            <!--            <v-btn class="ma-0" dark color="purple darken-2" @click="reload"-->
+            <!--              >New Order</v-btn-->
+            <!--            >-->
+          </v-toolbar>
+          <v-card class="ma-3">
+            <v-card-text>
+              <v-text-field
+                v-model="trackCode"
+                label="Enter your order code:"
+                hide-details
+                color="purple darken-3"
+              ></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn dark color="purple darken-3" @click="trackOrder"
+                >Track</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+          <!--          -->
+          <v-card v-if="order && Object.keys(order).length" class="ma-3">
+            <v-card-text>
+              <p>
+                <span class="font-weight-medium">Order:</span>
+                {{ order.code }}
+              </p>
+              <p class="mb-0">
+                <span class="font-weight-medium">Status:</span>
+                {{ order.status }}
+              </p>
+            </v-card-text>
+          </v-card>
+        </v-card>
+      </v-dialog>
     </v-main>
   </div>
 </template>
@@ -288,7 +350,7 @@ import { HTTP } from "../actions/index";
 export default {
   name: "MenuSingle",
   setup() {
-    const order = ref([]);
+    // const order = ref([]);
     const notes = ref("");
     const { menu, getOneMenu } = useMenu();
     const menuName = ref("");
@@ -298,7 +360,6 @@ export default {
     const public_key = process.env.VUE_APP_PUBLIC_KEY;
     const private_key = process.env.VUE_APP_PRIVATE_KEY;
     const liqpay = ref({});
-    alert(public_key);
     liqpay.value = new LiqPay(public_key, private_key);
 
     const data = ref("");
@@ -310,7 +371,7 @@ export default {
       // ...useDish(),
       dishes: menuDishes,
       ...useOrder(),
-      order,
+      // order,
       notes,
       email,
       menu,
@@ -334,7 +395,7 @@ export default {
     console.log("AAAAA: ", this.dishes);
     this.loading = false;
     setInterval(() => {
-      console.log(this.orders, this.orders.length);
+      // console.log(this.orders, this.orders.length);
       if (this.orders.length) this.getMyOrders();
     }, 5000);
   },
@@ -342,6 +403,8 @@ export default {
     return {
       dialog: false,
       dialogMyOrders: false,
+      dialogTrackOrder: false,
+      trackCode: "",
       headers: [
         {
           text: "",
@@ -408,7 +471,7 @@ export default {
     validEmail() {
       const correct = this.rules.email(this.email);
       console.log(correct);
-      return correct === true;
+      return correct === true && !this.cartEmpty;
     },
     ordersMine() {
       return this.orders.filter((order) => order.status !== "Completed");
@@ -446,6 +509,10 @@ export default {
     },
     reload() {
       router.go();
+    },
+    trackOrder() {
+      this.getOneOrderByCode(this.trackCode);
+      console.log("One order:", this.order);
     },
     // async orderPreview() {
     //   const orderPreview = this.dishes
@@ -517,6 +584,12 @@ export default {
       }, 20000);
       this.dialog = false;
       this.dialogMyOrders = true;
+      this.dishes = this.dishes.map((dish) => {
+        dish.amount = 0;
+        return dish;
+      });
+      this.cartEmpty = true;
+      this.total = 0;
       // this.dishes.reduce((prev, dish, ind, acc) => {
       //   if (dish.amount) {
       //     acc.push({

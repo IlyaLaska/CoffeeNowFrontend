@@ -16,7 +16,7 @@ export default function useMenu() {
   const menus = ref([]);
   const menusCount = ref(0);
 
-  const dishes = ref([]);
+  const menuDishes = ref([]);
 
   const initialMenu = {
     name: "",
@@ -50,7 +50,7 @@ export default function useMenu() {
         dish.amount = 0;
         return dish;
       });
-      dishes.value = res.dishes.map((dish) => {
+      menuDishes.value = res.dishes.map((dish) => {
         dish.amount = 0;
         return dish;
       });
@@ -112,7 +112,7 @@ export default function useMenu() {
   return {
     menu,
     menus,
-    dishes,
+    menuDishes,
     initialMenu,
     getMenus,
     getOneMenu,

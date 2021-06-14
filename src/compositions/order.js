@@ -4,6 +4,7 @@ import {
   apiFetchMyOrders,
   apiFetchAllOrders,
   apiFetchOneOrder,
+  apiFetchOneOrderByCode,
   apiCreateOrder,
   apiUpdateOrder,
   apiDeleteOrder,
@@ -53,8 +54,8 @@ export default function useOrder() {
   const getMyOrders = async () => {
     const params = new URLSearchParams();
     const res = await apiFetchMyOrders(params, orders.value);
-    console.log("WTF:: ", orders.value);
-    console.log("MY ORDERS:: ", res);
+    // console.log("WTF:: ", orders.value);
+    // console.log("MY ORDERS:: ", res);
     if (!res.length) noOrders.value = true;
     orders.value = res;
   };
@@ -87,6 +88,16 @@ export default function useOrder() {
   const getOneOrder = async (id) => {
     const { value } = await apiFetchOneOrder(id);
     order.value = value;
+  };
+
+  const getOneOrderByCode = async (code) => {
+    const value = await apiFetchOneOrderByCode(code);
+    if (value instanceof Error) {
+      order.value = null;
+    } else {
+      order.value = value;
+      console.log("In comp:", order.value);
+    }
   };
 
   const updateOrder = (id, item) =>
@@ -152,6 +163,7 @@ export default function useOrder() {
     getActiveOrders,
     getAllOrders,
     getOneOrder,
+    getOneOrderByCode,
     updateOrder,
     createOrder,
     deleteOrder,

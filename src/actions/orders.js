@@ -37,6 +37,12 @@ export function apiFetchOneOrder(id) {
     .catch((err) => err);
 }
 
+export function apiFetchOneOrderByCode(code) {
+  return HTTP.get(`/order/code/${code}`)
+    .then((value) => value.data)
+    .catch((err) => err);
+}
+
 export function apiCreateOrder(order) {
   return HTTP.post("/order", order)
     .then((x) => x)
