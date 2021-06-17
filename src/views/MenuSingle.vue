@@ -36,7 +36,7 @@
       >
     </v-app-bar>
     <v-main>
-      <v-card class="py-2">
+      <v-card class="py-2 elevation-0">
         <!--        <v-data-table-->
         <!--          :headers="headers"-->
         <!--          :loading="loading"-->
