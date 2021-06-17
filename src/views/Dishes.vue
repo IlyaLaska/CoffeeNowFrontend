@@ -70,6 +70,16 @@
                     color="purple darken-3"
                   ></v-text-field>
                 </v-col>
+                <v-col cols="12" class="py-1">
+                  <v-file-input
+                    chips
+                    label="Image file"
+                    :rules="[rules.required]"
+                    color="purple darken-3"
+                    truncate-length="15"
+                    v-model="file"
+                  ></v-file-input>
+                </v-col>
               </v-card-text>
               <v-card-actions class="elevation-1">
                 <v-spacer></v-spacer>
@@ -114,6 +124,7 @@ import utils from "@/compositions/utils";
 import filters from "@/mixins/filters";
 import GenericDelete from "@/components/GenericDelete";
 import useDish from "@/compositions/dish";
+import { uploadImage } from "../actions/images";
 
 export default {
   name: "Dishes",
@@ -136,6 +147,7 @@ export default {
     return {
       dialog: false,
       dialogDelete: false,
+      file: null,
       headers: [
         {
           text: "",
@@ -231,17 +243,23 @@ export default {
     async save() {
       const correct = this.$refs.form.validate();
       if (correct) {
+        const formData = new FormData();
+        formData.append("file", this.file);
+        const res = await uploadImage(formData);
+        console.log("After upload: ", res);
+        const imageId = res.data.id;
         if (this.editedIndex !== -1) {
           const newObj = {
             name: this.defaultDish.name,
             description: this.defaultDish.description,
             price: parseFloat(this.defaultDish.price), // TODO why no work on your own??? - can create, cannot update
             category: this.defaultDish.category,
+            imageId,
           };
           const res = await this.updateDish(this.editedIndex, newObj);
           if (res) this.close();
         } else {
-          const res = await this.createDish(this.defaultDish);
+          const res = await this.createDish({ ...this.defaultDish, imageId });
           if (res) this.close();
         }
       } else {

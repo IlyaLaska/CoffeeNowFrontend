@@ -14,6 +14,14 @@
       <v-btn
         class="ma-0"
         dark
+        color="orange darken-4 elevation-2"
+        @click="dialog = !dialog"
+        >Order!</v-btn
+      >
+      <v-divider vertical inset class="mx-2"></v-divider>
+      <v-btn
+        class="ma-0"
+        dark
         color="purple darken-3 elevation-0"
         @click="dialogMyOrders = !dialogMyOrders"
         >My orders</v-btn
@@ -28,84 +36,84 @@
       >
     </v-app-bar>
     <v-main>
-      <v-card class="ma-3">
-        <v-data-table
-          :headers="headers"
-          :loading="loading"
-          :items="dishes"
-          :options.sync="options"
-          :mobile-breakpoint="1024"
-          sort-by="category"
-          sort-asc
-          class="elevation-1"
-          hide-default-footer
-        >
-          <!--    Form controls-->
-          <template v-slot:top>
-            <v-toolbar flat>
-              <!--              <v-dialog persistent v-model="dialog" max-width="80vh">-->
-              <!--                &lt;!&ndash;          New item Button&ndash;&gt;-->
-              <!--                <template v-slot:activator="{ on }">-->
-              <!--                  <v-btn-->
-              <!--                    color="purple darken-3"-->
-              <!--                    dark-->
-              <!--                    class="mb-2"-->
-              <!--                    v-on="on"-->
-              <!--                    @click="toCheckout"-->
-              <!--                  >-->
-              <!--                    Order-->
-              <!--                  </v-btn>-->
-              <!--                </template>-->
-              <!--              </v-dialog>-->
-              <v-btn
-                class="ma-0"
-                dark
-                color="purple darken-3"
-                @click="dialog = !dialog"
-                >Order</v-btn
-              >
-              <!--              <v-divider class="ml-4" inset vertical></v-divider>-->
-              <v-divider class="mx-3" inset vertical></v-divider>
-              <v-toolbar-title class="font-weight-medium">{{
-                menu.name
-              }}</v-toolbar-title>
-            </v-toolbar>
-          </template>
-          <template v-slot:[`item.id`]="{}">
-            <v-avatar size="40" color="purple darken-3">
-              <v-icon dark> mdi-account </v-icon>
-            </v-avatar>
-          </template>
-          <template v-slot:[`item.roles`]="{ item }">
-            <v-chip
-              v-for="role in item.roles"
-              :key="role.id"
-              class="ma-1"
-              color="gray"
-            >
-              <v-icon left small color="grey"> mdi-semantic-web </v-icon>
-              {{ role.name }}
-            </v-chip>
-          </template>
-          <template v-slot:[`item.description`]="{ item }">
-            <div style="max-width: 60vw">{{ item.description }}</div>
-          </template>
-          <template v-slot:[`item.createDate`]="{ item }">
-            {{ item.createDate | shortDate }}
-          </template>
-          <template v-slot:[`item.actions`]="{ item }">
-            <v-icon small class="mr-2" @click="removeItem(item)">
-              mdi-minus-thick
-            </v-icon>
-            <v-icon small @click="addItem(item)"> mdi-plus-thick </v-icon>
-          </template>
-          <!--          <template v-slot:footer><div>TETSTTST</div></template>-->
-          <!--          <v-data-footer-->
-          <!--            disable-pagination="true"-->
-          <!--            disable-items-per-page="true"-->
-          <!--          >-->
-          <!--          </v-data-footer>-->
-        </v-data-table>
+      <v-card class="py-2">
+        <!--        <v-data-table-->
+        <!--          :headers="headers"-->
+        <!--          :loading="loading"-->
+        <!--          :items="dishes"-->
+        <!--          :options.sync="options"-->
+        <!--          :mobile-breakpoint="1024"-->
+        <!--          sort-by="category"-->
+        <!--          sort-asc-->
+        <!--          class="elevation-1"-->
+        <!--          hide-default-footer-->
+        <!--        >-->
+        <!--          &lt;!&ndash;    Form controls&ndash;&gt;-->
+        <!--          <template v-slot:top>-->
+        <!--            <v-toolbar flat>-->
+        <!--              &lt;!&ndash;              <v-dialog persistent v-model="dialog" max-width="80vh">&ndash;&gt;-->
+        <!--              &lt;!&ndash;                &lt;!&ndash;          New item Button&ndash;&gt;&ndash;&gt;-->
+        <!--              &lt;!&ndash;                <template v-slot:activator="{ on }">&ndash;&gt;-->
+        <!--              &lt;!&ndash;                  <v-btn&ndash;&gt;-->
+        <!--              &lt;!&ndash;                    color="purple darken-3"&ndash;&gt;-->
+        <!--              &lt;!&ndash;                    dark&ndash;&gt;-->
+        <!--              &lt;!&ndash;                    class="mb-2"&ndash;&gt;-->
+        <!--              &lt;!&ndash;                    v-on="on"&ndash;&gt;-->
+        <!--              &lt;!&ndash;                    @click="toCheckout"&ndash;&gt;-->
+        <!--              &lt;!&ndash;                  >&ndash;&gt;-->
+        <!--              &lt;!&ndash;                    Order&ndash;&gt;-->
+        <!--              &lt;!&ndash;                  </v-btn>&ndash;&gt;-->
+        <!--              &lt;!&ndash;                </template>&ndash;&gt;-->
+        <!--              &lt;!&ndash;              </v-dialog>&ndash;&gt;-->
+        <!--              <v-btn-->
+        <!--                class="ma-0"-->
+        <!--                dark-->
+        <!--                color="purple darken-3"-->
+        <!--                @click="dialog = !dialog"-->
+        <!--                >Order</v-btn-->
+        <!--              >-->
+        <!--              &lt;!&ndash;              <v-divider class="ml-4" inset vertical></v-divider>&ndash;&gt;-->
+        <!--              <v-divider class="mx-3" inset vertical></v-divider>-->
+        <!--              <v-toolbar-title class="font-weight-medium">{{-->
+        <!--                menu.name-->
+        <!--              }}</v-toolbar-title>-->
+        <!--            </v-toolbar>-->
+        <!--          </template>-->
+        <!--          <template v-slot:[`item.id`]="{}">-->
+        <!--            <v-avatar size="40" color="purple darken-3">-->
+        <!--              <v-icon dark> mdi-account </v-icon>-->
+        <!--            </v-avatar>-->
+        <!--          </template>-->
+        <!--          <template v-slot:[`item.roles`]="{ item }">-->
+        <!--            <v-chip-->
+        <!--              v-for="role in item.roles"-->
+        <!--              :key="role.id"-->
+        <!--              class="ma-1"-->
+        <!--              color="gray"-->
+        <!--            >-->
+        <!--              <v-icon left small color="grey"> mdi-semantic-web </v-icon>-->
+        <!--              {{ role.name }}-->
+        <!--            </v-chip>-->
+        <!--          </template>-->
+        <!--          <template v-slot:[`item.description`]="{ item }">-->
+        <!--            <div style="max-width: 60vw">{{ item.description }}</div>-->
+        <!--          </template>-->
+        <!--          <template v-slot:[`item.createDate`]="{ item }">-->
+        <!--            {{ item.createDate | shortDate }}-->
+        <!--          </template>-->
+        <!--          <template v-slot:[`item.actions`]="{ item }">-->
+        <!--            <v-icon small class="mr-2" @click="removeItem(item)">-->
+        <!--              mdi-minus-thick-->
+        <!--            </v-icon>-->
+        <!--            <v-icon small @click="addItem(item)"> mdi-plus-thick </v-icon>-->
+        <!--          </template>-->
+        <!--          &lt;!&ndash;          <template v-slot:footer><div>TETSTTST</div></template>&ndash;&gt;-->
+        <!--          &lt;!&ndash;          <v-data-footer&ndash;&gt;-->
+        <!--          &lt;!&ndash;            disable-pagination="true"&ndash;&gt;-->
+        <!--          &lt;!&ndash;            disable-items-per-page="true"&ndash;&gt;-->
+        <!--          &lt;!&ndash;          >&ndash;&gt;-->
+        <!--          &lt;!&ndash;          </v-data-footer>&ndash;&gt;-->
+        <!--        </v-data-table>-->
         <!--        <v-card-actions>-->
         <!--          <v-text-field-->
         <!--            v-model="notes"-->
@@ -114,6 +122,78 @@
         <!--            color="purple darken-3"-->
         <!--          ></v-text-field>-->
         <!--        </v-card-actions>-->
+        <v-container>
+          <!--          <v-row dense>-->
+          <!--            <v-col cols="4">-->
+          <!--              <v-card class="pa-2">-->
+          <!--                <v-card-title class="text-center">{{ dish.name }}</v-card-title>-->
+          <!--                &lt;!&ndash;                <v-img :src="dish.image.location"></v-img>&ndash;&gt;-->
+          <!--                <v-card-text>-->
+          <!--                  <div>{{ dish.category }}</div>-->
+          <!--                  <div>{{ dish.price }}</div>-->
+          <!--                  <div>{{ dish.description }}</div>-->
+          <!--                  <div class="float-right">-->
+          <!--                    <v-icon small @click="addItem(item)">-->
+          <!--                      mdi-plus-thick</v-icon-->
+          <!--                    >-->
+          <!--                    {{ dish.amount }}-->
+          <!--                    <v-icon small class="mr-2" @click="removeItem(item)">-->
+          <!--                      mdi-minus-thick</v-icon-->
+          <!--                    >-->
+          <!--                  </div>-->
+          <!--                </v-card-text>-->
+          <!--              </v-card>-->
+          <!--            </v-col>-->
+          <!--          </v-row>-->
+          <v-layout row wrap>
+            <v-flex v-for="dish in dishes" :key="dish.id">
+              <v-card style="width: 19vw; min-width: 200px" class="my-1">
+                <div class="text-center">
+                  <v-img
+                    :aspect-ratio="3 / 2"
+                    :src="
+                      dish.image
+                        ? dish.image.location
+                        : 'https://previews.123rf.com/images/koblizeek/koblizeek1902/koblizeek190200095/124960541-no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-.jpg'
+                    "
+                  >
+                  </v-img>
+                </div>
+                <v-card-title>{{ dish.name }}</v-card-title>
+                <v-card-text>
+                  <div>{{ dish.category }}</div>
+                  <div class="font-weight-medium">₴{{ dish.price }}</div>
+                  <div style="height: 25vh" class="descClass">
+                    {{ dish.description }}
+                  </div>
+                  <div class="text-h6">
+                    <v-icon class="mx-1" @click="removeItem(dish)">
+                      mdi-minus-thick</v-icon
+                    >
+                    {{ dish.amount }}
+                    <v-icon class="mx-1" @click="addItem(dish)">
+                      mdi-plus-thick</v-icon
+                    >
+                  </div>
+                </v-card-text>
+                <!--                <div class="text-no-wrap">-->
+                <!--                  {{ dish.name }}-->
+                <!--                </div>-->
+              </v-card>
+            </v-flex>
+            <v-flex v-for="i in 15" :key="i">
+              <v-card
+                flat
+                style="
+                  background-color: transparent;
+                  width: 19vw;
+                  min-width: 200px;
+                "
+                class="my-1"
+              />
+            </v-flex>
+          </v-layout>
+        </v-container>
       </v-card>
       <v-dialog v-model="dialog" width="40vw" persistent>
         <v-card width="40vw" class="wrap">
@@ -392,7 +472,7 @@ export default {
     }
     // console.log("AAAAA: ", this.menu);
     this.dishes = this.menu.dishes;
-    console.log("AAAAA: ", this.dishes);
+    // console.log("AAAAA: ", this.dishes);
     this.loading = false;
     setInterval(() => {
       // console.log(this.orders, this.orders.length);
@@ -640,5 +720,12 @@ export default {
   display: flex;
   flex: 1;
   max-height: 1rem;
+}
+
+.descClass {
+  /*white-space: nowrap;*/
+  word-break: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
